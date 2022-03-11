@@ -2,6 +2,10 @@ package com.dut.blablacarfinder;
 
 import android.os.AsyncTask;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,16 +18,16 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
-    private ArrayList<Point> pointsArray;
+    GoogleMap googleMap;
+    JSONArray result =null;
+    int nbHits;
+    int nbRows = 50;
 
     @Override
     //params : double[] area
     protected JSONArray doInBackground(Object... params) {
         double[] area = (double[]) params[0];
-        pointsArray = (ArrayList<Point>) params[1];
-        JSONArray result =null;
-        int nbHits;
-        int nbRows = 50;
+        googleMap = (GoogleMap) params[1];
 
         String[] partsUrl = new String[4];
         partsUrl[0] = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=aires-covoiturage&q=&rows="
@@ -75,13 +79,27 @@ public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
                 JSONObject row = jsonArray.getJSONObject(cpt);
                 JSONObject fields = (JSONObject) row.get("fields");
                 JSONArray coordinates = (JSONArray) fields.get("coordonnees");
-                Point point = new Point((double) coordinates.get(0), (double) coordinates.get(1),
-                        (int) fields.getInt("dist"), fields.getString("nom_du_lieu"));
+                Point point = new Point(
+                        (double) coordinates.get(0),
+                        (double) coordinates.get(1),
+                        (int) fields.getInt("dist"),
+                        fields.getString("nom_du_lieu"),
+                        fields.getString("nom_epci"),
+                        fields.getInt("places"),
+                        fields.getString("adresse"),
+                        fields.getString("ville"),
+                        fields.getString("code_postal")
+                        );
                 pointsArray.add(point);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        this.pointsArray = pointsArray;
+        for(int cpt = 0; cpt < pointsArray.size(); cpt++){
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(pointsArray.get(cpt).latitude, pointsArray.get(cpt).longitude))
+                    .title(pointsArray.get(cpt).placeName)
+            );
+        }
     }
 }

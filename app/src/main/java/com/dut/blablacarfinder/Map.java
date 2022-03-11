@@ -14,17 +14,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.dut.blablacarfinder.databinding.ActivityMapBinding;
 
+import java.util.ArrayList;
+
 public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapBinding binding;
     double[] location;
+    public ArrayList<Point> pointsArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        location = intent.getDoubleArrayExtra(MainActivity.INTENT_LOCATION);
+
 
         binding = ActivityMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -38,8 +40,13 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng userPos = new LatLng(this.location[0], this.location[1]);
+
+        location = getIntent().getDoubleArrayExtra(MainActivity.INTENT_LOCATION);
+        new APIAsyncTask().execute(location, mMap);
+
+        LatLng userPos = new LatLng(location[0], location[1]);
         mMap.addMarker(new MarkerOptions().position(userPos).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(userPos));
+        mMap.animateCamera( CameraUpdateFactory.zoomTo(10f));
     }
 }

@@ -3,23 +3,27 @@ package com.dut.blablacarfinder;
 import androidx.annotation.NonNull;
 
 public class Point {
-    private double latitude;
-    private double longitude;
-    private int distanceFromUser;
-    private String placeName;
-    private String epsiName;
-    private int nbPlaces;
-    private String address;
+    protected double latitude;
+    protected double longitude;
+    protected int distanceFromUser;
+    protected String placeName;
+    protected String epsiName;
+    protected int nbPlaces;
+    protected String address;
 
-    public Point(double latitude, double longitude, int distanceFromUser, String placeName) {
+    public Point(double latitude, double longitude, int distanceFromUser, String placeName,
+                 String epsiName, int nbPlaces, String address, String city, String code) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distanceFromUser = distanceFromUser;
         this.placeName = placeName;
+        this.epsiName = epsiName;
+        this.nbPlaces = nbPlaces;
+        setAddress(address, city, code);
     }
 
-    public void setAddress(String address, String city) {
-        this.address = address + " " + city;
+    public void setAddress(String address, String city, String code) {
+        this.address = address + " " + city + " " + code;
     }
 
     @NonNull

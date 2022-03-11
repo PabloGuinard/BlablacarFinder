@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     double[]area;
     public static final String INTENT_LOCATION = "location";
     public int AREA_RADIUS = 100000;
-    public ArrayList<Point> pointsArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         Button bt_map = findViewById(R.id.bt_map);
 
         setLocation();
-        new APIAsyncTask().execute(area, pointsArray);
 
         bt_map.setOnClickListener(view -> {
             Intent intent = new Intent(this, Map.class);
