@@ -1,6 +1,5 @@
 package com.dut.blablacarfinder;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -12,31 +11,35 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ApiInterface {
+
     double[]area;
     public static final String INTENT_LOCATION = "location";
     public int AREA_RADIUS = 100000;
+
+    Button btMap;
+    ListView lvPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button bt_map = findViewById(R.id.bt_map);
-
         setLocation();
+        new APIAsyncTask().execute(area, this);
 
-        bt_map.setOnClickListener(view -> {
+        btMap = findViewById(R.id.bt_map);
+        btMap.setOnClickListener(view -> {
             Intent intent = new Intent(this, Map.class);
             intent.putExtra(INTENT_LOCATION, area);
             startActivity(intent);
         });
+
+        lvPoints = findViewById(R.id.lv_main_page);
     }
 
     @SuppressLint("MissingPermission")
@@ -57,5 +60,10 @@ public class MainActivity extends AppCompatActivity {
             Log.e("error", "location null");
         }
         this.area = area;
+    }
+
+    @Override
+    public void result(ArrayList<Point> pointsList) {
+        lvPoints.setAdapter(new ListPointsAdapter(pointsList));
     }
 }

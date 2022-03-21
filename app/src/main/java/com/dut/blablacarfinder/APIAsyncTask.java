@@ -1,6 +1,7 @@
 package com.dut.blablacarfinder;
 
 import android.os.AsyncTask;
+import android.widget.BaseAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,17 +18,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
-    GoogleMap googleMap;
+public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
+    /*GoogleMap googleMap;*/
     JSONArray result =null;
     int nbHits;
     int nbRows = 50;
+    ApiInterface apiInterface;
 
     @Override
     //params : double[] area
-    protected JSONArray doInBackground(Object... params) {
+    protected ArrayList<Point> doInBackground(Object... params) {
         double[] area = (double[]) params[0];
-        googleMap = (GoogleMap) params[1];
+        apiInterface = (ApiInterface) params[1];
+        /*googleMap = (GoogleMap) params[1];*/
 
         String[] partsUrl = new String[4];
         partsUrl[0] = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=aires-covoiturage&q=&rows="
@@ -49,7 +52,7 @@ public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
                 result = response.getJSONArray("records");
 
                 //for each next page add to result
-                for (int cpt = 50; cpt < nbHits; cpt +=nbRows){
+                for (int cpt = nbRows; cpt < nbHits; cpt +=nbRows){
                     url = new URL(partsUrl[0] + cpt + partsUrl[1] + area[0] + partsUrl[2] + area[1] + partsUrl[3] + area[2]);
                     connection = (HttpURLConnection) url.openConnection();
 
@@ -65,18 +68,14 @@ public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        return result;
-    }
 
-    @Override
-    protected void onPostExecute(JSONArray jsonArray) {
-        super.onPostExecute(jsonArray);
+
         ArrayList<Point> pointsArray = new ArrayList<>();
 
         //set pointsArray
-        for (int cpt = 0; cpt < jsonArray.length(); cpt++){
+        for (int cpt = 0; cpt < result.length(); cpt++){
             try {
-                JSONObject row = jsonArray.getJSONObject(cpt);
+                JSONObject row = result.getJSONObject(cpt);
                 JSONObject fields = (JSONObject) row.get("fields");
                 JSONArray coordinates = (JSONArray) fields.get("coordonnees");
                 Point point = new Point(
@@ -84,22 +83,29 @@ public class APIAsyncTask extends AsyncTask<Object, Void, JSONArray> {
                         (double) coordinates.get(1),
                         (int) fields.getInt("dist"),
                         fields.getString("nom_du_lieu"),
-                        fields.getString("nom_epci"),
                         fields.getInt("places"),
                         fields.getString("adresse"),
                         fields.getString("ville"),
                         fields.getString("code_postal")
-                        );
+                );
                 pointsArray.add(point);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        for(int cpt = 0; cpt < pointsArray.size(); cpt++){
+
+        return pointsArray;
+    }
+
+    @Override
+    protected void onPostExecute(ArrayList<Point> pointsList) {
+        super.onPostExecute(pointsList);
+        apiInterface.result(pointsList);
+        /*for(int cpt = 0; cpt < pointsArray.size(); cpt++){
             googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(pointsArray.get(cpt).latitude, pointsArray.get(cpt).longitude))
                     .title(pointsArray.get(cpt).placeName)
             );
-        }
+        }*/
     }
 }

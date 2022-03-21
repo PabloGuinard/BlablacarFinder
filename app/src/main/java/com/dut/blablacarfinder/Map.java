@@ -2,8 +2,6 @@ package com.dut.blablacarfinder;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,7 +19,6 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private ActivityMapBinding binding;
     double[] location;
-    public ArrayList<Point> pointsArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +39,6 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback {
         mMap = googleMap;
 
         location = getIntent().getDoubleArrayExtra(MainActivity.INTENT_LOCATION);
-        new APIAsyncTask().execute(location, mMap);
 
         LatLng userPos = new LatLng(location[0], location[1]);
         mMap.addMarker(new MarkerOptions().position(userPos).title("You are here"));
