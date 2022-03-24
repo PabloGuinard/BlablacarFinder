@@ -1,16 +1,19 @@
 package com.dut.blablacarfinder;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 
 public class ListPointsAdapter extends BaseAdapter {
-    private final ArrayList<Point> pointsList;
+    private ArrayList<Point> pointsList;
 
     public ListPointsAdapter(ArrayList<Point> pointsList) {
         this.pointsList = pointsList;
@@ -40,15 +43,14 @@ public class ListPointsAdapter extends BaseAdapter {
 
         TextView tvPlaceName = view.findViewById(R.id.tv_place_name);
         tvPlaceName.setText(pointsList.get(i).placeName);
-        TextView tvAdress = view.findViewById(R.id.tv_address);
-        tvAdress.setText(pointsList.get(i).address);
-        TextView tvAdress2 = view.findViewById(R.id.tv_adresse_2);
-        tvAdress2.setText(pointsList.get(i).city + " " + pointsList.get(i).code);
-        TextView tvPlaces = view.findViewById(R.id.tv_places_amount);
-        tvPlaces.setText(String.valueOf(pointsList.get(i).nbPlaces));
         TextView tvDistance = view.findViewById(R.id.tv_distance);
-        String text = pointsList.get(i).distanceFromUser + " meters";
+        String text = pointsList.get(i).distanceFromUser + " " + view.getContext().getString(R.string.meters);
         tvDistance.setText(text);
+        View finalView = view;
+        view.setOnClickListener(see -> {
+            Log.e("button", "");
+            PopupFragment popup = new PopupFragment(pointsList.get(i), finalView.getContext());
+        });
 
         return view;
     }

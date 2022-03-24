@@ -21,15 +21,17 @@ import java.util.ArrayList;
 public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
     /*GoogleMap googleMap;*/
     JSONArray result =null;
-    int nbHits;
+    int nbHits = -1;
     int nbRows = 50;
     ApiInterface apiInterface;
+    ArrayList<Point> pointsList;
 
     @Override
-    //params : double[] area
+    //params : double[] area, ApiInterface apiInterface, ArrayList<Point> pointsList
     protected ArrayList<Point> doInBackground(Object... params) {
         double[] area = (double[]) params[0];
         apiInterface = (ApiInterface) params[1];
+        pointsList = (ArrayList<Point>) params[2];
         /*googleMap = (GoogleMap) params[1];*/
 
         String[] partsUrl = new String[4];
@@ -50,7 +52,6 @@ public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
                 in.close();
                 nbHits = response.getInt("nhits");
                 result = response.getJSONArray("records");
-
                 //for each next page add to result
                 for (int cpt = nbRows; cpt < nbHits; cpt +=nbRows){
                     url = new URL(partsUrl[0] + cpt + partsUrl[1] + area[0] + partsUrl[2] + area[1] + partsUrl[3] + area[2]);
@@ -67,8 +68,12 @@ public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+            return null;
         }
 
+        if(nbHits == -1){
+            return null;
+        }
 
         ArrayList<Point> pointsArray = new ArrayList<>();
 
@@ -100,6 +105,9 @@ public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
     @Override
     protected void onPostExecute(ArrayList<Point> pointsList) {
         super.onPostExecute(pointsList);
+        if(pointsList == null){
+            return;
+        }
         apiInterface.result(pointsList);
         /*for(int cpt = 0; cpt < pointsArray.size(); cpt++){
             googleMap.addMarker(new MarkerOptions()

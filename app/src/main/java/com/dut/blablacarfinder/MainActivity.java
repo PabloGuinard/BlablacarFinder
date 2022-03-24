@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
     double[]area;
     public static final String INTENT_LOCATION = "location";
-    public int AREA_RADIUS = 100000;
+    public static final String INTENT_POINTSLIST = "pointsList";
+    public int AREA_RADIUS = 50000;
+    ArrayList<Point> pointsList;
 
     Button btMap;
     ListView lvPoints;
@@ -30,12 +32,13 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         setContentView(R.layout.activity_main);
 
         setLocation();
-        new APIAsyncTask().execute(area, this);
+        new APIAsyncTask().execute(area, this, pointsList);
 
         btMap = findViewById(R.id.bt_map);
         btMap.setOnClickListener(view -> {
             Intent intent = new Intent(this, Map.class);
             intent.putExtra(INTENT_LOCATION, area);
+            intent.putExtra(INTENT_POINTSLIST, pointsList);
             startActivity(intent);
         });
 
@@ -65,5 +68,6 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
     @Override
     public void result(ArrayList<Point> pointsList) {
         lvPoints.setAdapter(new ListPointsAdapter(pointsList));
+        this.pointsList = pointsList;
     }
 }

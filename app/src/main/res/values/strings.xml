@@ -5,9 +5,12 @@
     <string name="place_name">Place name</string>
     <string name="places_amount">Places</string>
     <string name="address">Address</string>
-    <string name="distance_from_user">Distance</string>
+    <string name="distance_from_user">Distance from you</string>
+    <string name="distance">Distance</string>
     <string name="colon"> : </string>
     <string name="meters">meters</string>
     <string name="city">City</string>
+    <string name="cancel">Cancel</string>
+    <string name="view">View</string>
 
 </resources>
