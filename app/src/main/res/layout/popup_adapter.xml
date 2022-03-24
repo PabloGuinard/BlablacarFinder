@@ -6,88 +6,89 @@
     android:layout_height="match_parent">
 
     <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/grid_layout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="0dp"
         app:columnCount="3"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:rowCount="2">
+        app:rowCount="4"
+        app:useDefaultMargins="true">
+
 
         <TextView
+            android:id="@+id/TextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/address"
             app:layout_column="0"
             app:layout_row="0" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/TextView1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/colon"
             app:layout_column="1"
             app:layout_row="0" />
 
         <TextView
-            android:id="@+id/tv_adress_popup"
+            android:id="@+id/tv_address_1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:text="@string/colon"
             app:layout_column="2"
             app:layout_row="0" />
 
         <TextView
-            android:id="@+id/tv_adress_2_popup"
+            android:id="@+id/tv_address_2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             app:layout_column="2"
             app:layout_row="1" />
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/places_amount"
-            app:layout_column="0"
-            app:layout_row="2" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/TextView2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/colon"
-            app:layout_column="1"
-            app:layout_row="2" />
-
-        <TextView
-            android:id="@+id/tv_places_amount_popup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_column="3"
-            app:layout_row="2" />
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/distance"
             app:layout_column="0"
             app:layout_row="2" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/TextView3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/colon"
             app:layout_column="1"
             app:layout_row="2" />
 
         <TextView
-            android:id="@+id/tv_distance_popup"
+            android:id="@+id/tv_distance"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_column="3"
+            app:layout_column="2"
             app:layout_row="2" />
+
+        <TextView
+            android:id="@+id/TextView4"
+            android:layout_width="wrap_content"
+            android:text="@string/places_amount"
+            app:layout_column="0"
+            app:layout_row="3" />
+
+        <TextView
+            android:id="@+id/TextView5"
+            android:layout_width="wrap_content"
+            android:text="@string/colon"
+            app:layout_column="1"
+            app:layout_row="3" />
+
+        <TextView
+            android:id="@+id/tv_nb_place"
+            android:layout_width="wrap_content"
+            app:layout_column="2"
+            app:layout_row="3" />
+
+
     </androidx.gridlayout.widget.GridLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

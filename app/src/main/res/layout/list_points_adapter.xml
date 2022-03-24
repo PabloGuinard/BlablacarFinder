@@ -29,7 +29,7 @@
 
 
         <TextView
-            android:id="@+id/lb_distance"
+            android:id="@+id/TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/distance_from_user"
@@ -37,7 +37,7 @@
             app:layout_row="3" />
 
         <TextView
-            android:id="@+id/tv_distance"
+            android:id="@+id/tv_address_popup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_column="2"

@@ -10,7 +10,7 @@
     <string name="colon"> : </string>
     <string name="meters">meters</string>
     <string name="city">City</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Back</string>
     <string name="view">View</string>
 
 </resources>

@@ -13,11 +13,18 @@ public class PopupFragment {
 
     public PopupFragment(Point point, Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.list_points_adapter, null);
+        View view = inflater.inflate(R.layout.popup_adapter, null);
+        TextView tvAddress1 = view.findViewById(R.id.tv_address_1);
+        tvAddress1.setText(point.address);
+        TextView tvAddress2 = view.findViewById(R.id.tv_address_2);
+        tvAddress2.setText(point.city + " " + point.code);
+        TextView tvDistance = view.findViewById(R.id.tv_distance);
+        tvDistance.setText(point.distanceFromUser + "");
+        TextView tvNbPlaces = view.findViewById(R.id.tv_nb_place);
+        tvNbPlaces.setText(point.nbPlaces + "");
         AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(point.placeName)
-                .setMessage("Exiting will call finish() method")
                 .setView(view)
                 .setPositiveButton(R.string.view, new DialogInterface.OnClickListener() {
                     @Override
