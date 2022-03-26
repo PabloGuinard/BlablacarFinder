@@ -26,10 +26,6 @@ public class Point implements Serializable {
         this.city = city;
     }
 
-    public String getAddress(String address, String city, String code) {
-        return address + " " + code + " " + city;
-    }
-
     @NonNull
     @Override
     public String toString() {

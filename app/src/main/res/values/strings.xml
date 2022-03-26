@@ -12,5 +12,6 @@
     <string name="city">City</string>
     <string name="cancel">Back</string>
     <string name="view">View</string>
+    <string name="unknown">Unknown</string>
 
 </resources>

@@ -10,8 +10,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -21,7 +24,10 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
     public static final String INTENT_LOCATION = "location";
     public static final String INTENT_POINTSLIST = "pointsList";
     public int AREA_RADIUS = 50000;
-    ArrayList<Point> pointsList;
+    private ArrayList<Point> pointsList = new ArrayList<>();
+    private ListPointsAdapter adapter;
+    private boolean isRefreshing = false;
+    private ProgressBar spinner;
 
     Button btMap;
     ListView lvPoints;
@@ -32,7 +38,8 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         setContentView(R.layout.activity_main);
 
         setLocation();
-        new APIAsyncTask().execute(area, this, pointsList);
+        new APIAsyncTask().execute(area, this, pointsList, this.getBaseContext());
+        isRefreshing = true;
 
         btMap = findViewById(R.id.bt_map);
         btMap.setOnClickListener(view -> {
@@ -42,7 +49,28 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
             startActivity(intent);
         });
 
+
+        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.VISIBLE);
+
         lvPoints = findViewById(R.id.lv_main_page);
+        lvPoints.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
+                final int lastItem = firstVisible + visibleCount;
+                if (lastItem == totalCount){
+                    if(!isRefreshing){
+                        new APIAsyncTask().execute(area, MainActivity.this, pointsList, MainActivity.this.getBaseContext());
+                        spinner.setVisibility(View.VISIBLE);
+                        isRefreshing = true;
+                    }
+                }
+            }
+        });
     }
 
     @SuppressLint("MissingPermission")
@@ -67,7 +95,26 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
     @Override
     public void result(ArrayList<Point> pointsList) {
-        lvPoints.setAdapter(new ListPointsAdapter(pointsList));
-        this.pointsList = pointsList;
+        //first request
+        this.pointsList.addAll(pointsList);
+        if(lvPoints.getAdapter() == null){
+            adapter = new ListPointsAdapter(this.pointsList);
+            lvPoints.setAdapter(adapter);
+        }
+        adapter.refresh(this.pointsList);
+        spinner.setVisibility(View.GONE);
+        isRefreshing = false;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+

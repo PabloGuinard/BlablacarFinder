@@ -31,6 +31,11 @@ public class ListPointsAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void refresh(ArrayList<Point> pointsList){
+        this.pointsList = pointsList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
@@ -45,7 +50,6 @@ public class ListPointsAdapter extends BaseAdapter {
         tvDistance.setText(text);
         View finalView = view;
         view.setOnClickListener(see -> {
-            Log.e("button", "");
             PopupFragment popup = new PopupFragment(pointsList.get(i), finalView.getContext());
         });
 

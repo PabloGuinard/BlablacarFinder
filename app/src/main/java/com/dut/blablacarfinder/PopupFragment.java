@@ -21,7 +21,11 @@ public class PopupFragment {
         TextView tvDistance = view.findViewById(R.id.tv_distance);
         tvDistance.setText(point.distanceFromUser + "");
         TextView tvNbPlaces = view.findViewById(R.id.tv_nb_place);
-        tvNbPlaces.setText(point.nbPlaces + "");
+        if(point.nbPlaces == 0){
+            tvNbPlaces.setText(context.getString(R.string.unknown));
+        } else {
+            tvNbPlaces.setText(point.nbPlaces + "");
+        }
         AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(point.placeName)
