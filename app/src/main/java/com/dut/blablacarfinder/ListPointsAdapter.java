@@ -11,9 +11,11 @@ import java.util.ArrayList;
 
 public class ListPointsAdapter extends BaseAdapter {
     private ArrayList<Point> pointsList;
+    private double[] area;
 
-    public ListPointsAdapter(ArrayList<Point> pointsList) {
+    public ListPointsAdapter(ArrayList<Point> pointsList, double[] area) {
         this.pointsList = pointsList;
+        this.area = area;
     }
 
     @Override
@@ -46,11 +48,11 @@ public class ListPointsAdapter extends BaseAdapter {
         TextView tvPlaceName = view.findViewById(R.id.tv_place_name);
         tvPlaceName.setText(pointsList.get(i).placeName);
         TextView tvDistance = view.findViewById(R.id.tv_address_popup);
-        String text = pointsList.get(i).distanceFromUser + " " + view.getContext().getString(R.string.meters);
+        String text = pointsList.get(i).distanceFromUser + " meters";
         tvDistance.setText(text);
         View finalView = view;
         view.setOnClickListener(see -> {
-            new PopupFragment().setPopup(pointsList.get(i), finalView.getContext());
+            new PopupFragment().setPopup(pointsList.get(i), finalView.getContext(), pointsList, area);
         });
 
         return view;

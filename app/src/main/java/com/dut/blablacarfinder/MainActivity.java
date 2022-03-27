@@ -20,9 +20,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements ApiInterface {
 
-    double[]area;
+    private double[]area;
     public static final String INTENT_LOCATION = "location";
     public static final String INTENT_POINTSLIST = "pointsList";
+    public static final String INTENT_SELECTED_POINT = "selectedPoint";
     public int AREA_RADIUS = 50000;
     private ArrayList<Point> pointsList = new ArrayList<>();
     private ListPointsAdapter adapter;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         //first request
         this.pointsList.addAll(pointsList);
         if(lvPoints.getAdapter() == null){
-            adapter = new ListPointsAdapter(this.pointsList);
+            adapter = new ListPointsAdapter(this.pointsList, area);
             lvPoints.setAdapter(adapter);
         }
         adapter.refresh(this.pointsList);
