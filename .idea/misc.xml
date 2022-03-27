@@ -4,10 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/drawable-anydpi/ic_marker_icon.xml" value="0.171" />
+        <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.244" />
         <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/layout/activity_map.xml" value="0.2" />
+        <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/layout/activity_settings.xml" value="0.264" />
         <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/layout/list_points_adapter.xml" value="0.264" />
         <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/layout/popup_adapter.xml" value="0.264" />
+        <entry key="..\:/Users/Pablo/Documents/IUT/IUT S4/Android/BlablacarFinder/app/src/main/res/mipmap-anydpi-v26/ic_banner.xml" value="0.244" />
       </map>
     </option>
   </component>

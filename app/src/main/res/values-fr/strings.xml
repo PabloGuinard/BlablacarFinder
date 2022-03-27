@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BlablacarFinder</string>
+    <string name="place_name">Nom du lieu</string>
+    <string name="places_amount">Places</string>
+    <string name="address">Adresse</string>
+    <string name="distance_from_user">Distance de vous</string>
+    <string name="distance">Distance</string>
+    <string name="meters">mètres</string>
+    <string name="city">Ville</string>
+    <string name="cancel">Annuler</string>
+    <string name="view">Voir</string>
+    <string name="unknown">Inconnu</string>
+    <string name="title_activity_map">Map</string>
+    <string name="map">Carte</string>
+    <string name="settings">Réglages</string>
+    <string name="language">Langue</string>
+    <string name="kilometers">kilomètres</string>
+    <string name="kilometers_upper">Kilomètres</string>
+    <string name="meters_upper">Mètres</string>
+    <string name="dark_mode">Mode sombre</string>
+    <string name="save">Sauvegarder et quitter</string>
+</resources>

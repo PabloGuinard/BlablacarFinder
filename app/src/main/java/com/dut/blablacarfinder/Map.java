@@ -5,7 +5,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -23,6 +27,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.dut.blablacarfinder.databinding.ActivityMapBinding;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, ApiInterface, GoogleMap.OnMarkerClickListener {
 
@@ -32,10 +37,12 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
     private CameraPosition oldPosition;
     private ConstraintLayout infosContainer;
     private ActivityMapBinding binding;
+    private Marker selectedMarker;
 
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setLanguage(Settings.language);
         super.onCreate(savedInstanceState);
 
         binding = ActivityMapBinding.inflate(getLayoutInflater());
@@ -43,7 +50,11 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
 
         infosContainer = findViewById(R.id.infos_container);
         infosContainer.setVisibility(View.GONE);
-        infosContainer.setBackgroundColor(R.color.white);
+        if(Settings.isDarkMode){
+            infosContainer.setBackgroundColor(R.color.black);
+        } else {
+            infosContainer.setBackgroundColor(R.color.white);
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -58,6 +69,10 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
         mMap.setOnMarkerClickListener(this);
         pointsList = (ArrayList<Point>) getIntent().getSerializableExtra(MainActivity.INTENT_POINTSLIST);
         area = getIntent().getDoubleArrayExtra(MainActivity.INTENT_LOCATION);
+        Point selectedPoint = null;
+        if(getIntent().hasExtra(MainActivity.INTENT_SELECTED_POINT)){
+            selectedPoint = (Point)getIntent().getSerializableExtra(MainActivity.INTENT_SELECTED_POINT);
+        }
 
         //user's marker
         LatLng userPos = new LatLng(area[0], area[1]);
@@ -72,13 +87,14 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
             @Override
             public void onMapClick(@NonNull LatLng latLng) {
                 infosContainer.setVisibility(View.GONE);
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             }
         });
         mMap.setMinZoomPreference(10f);
         oldPosition = mMap.getCameraPosition();
 
         //add markers
-        addMarkers(pointsList);
+        addMarkers(pointsList, selectedPoint);
 
         //request new data
         mMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
@@ -99,14 +115,7 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        for (int cpt = 0; cpt < pointsList.size(); cpt ++){
-            if(pointsList.get(cpt).placeName.equals(marker.getTitle())){
-                infosContainer.setVisibility(View.VISIBLE);
-                setInfos(pointsList.get(cpt));
-                return true;
-            }
-        }
-        return false;
+        return setMarkerOnclick(marker);
     }
 
     @SuppressLint("SetTextI18n")
@@ -118,7 +127,14 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
         tv = findViewById(R.id.tv_address_2);
         tv.setText(point.city + " " + point.code);
         tv = findViewById(R.id.tv_distance);
-        tv.setText(point.distanceFromUser + " meters");
+        String text;
+        if(Settings.isDistanceMeters) {
+            text = point.distanceFromUser + " " + getString(R.string.meters);
+        } else {
+            text = MainActivity.meterToKilometer(point.distanceFromUser + "")
+                    + " " + getString(R.string.kilometers);
+        }
+        tv.setText(text);
         tv = findViewById(R.id.tv_nb_place);
         if(point.nbPlaces == 0){
             tv.setText(getString(R.string.unknown));
@@ -127,19 +143,48 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
         }
     }
 
-    private void addMarkers(ArrayList<Point> pointsList){
+    private void addMarkers(ArrayList<Point> pointsList, Point point){
         for (int cpt = 0; cpt < pointsList.size(); cpt++){
             LatLng position = new LatLng(pointsList.get(cpt).latitude, (pointsList.get(cpt).longitude));
-            mMap.addMarker(new MarkerOptions()
+            MarkerOptions markerOptions = new MarkerOptions()
                     .position(position)
-                    .title((pointsList.get(cpt).placeName)));
-
+                    .title((pointsList.get(cpt).placeName));
+            Marker marker = mMap.addMarker(markerOptions);
+            //set marker if from popup
+            if(point != null && point.placeName.equals(pointsList.get(cpt).placeName)){
+                selectedMarker = marker;
+                setMarkerOnclick(marker);
+            }
         }
     }
 
     @Override
     public void result(ArrayList<Point> pointsList) {
-        addMarkers(pointsList);
+        addMarkers(pointsList, null);
         this.pointsList.addAll(pointsList);
+    }
+
+    private boolean setMarkerOnclick(Marker marker){
+        if(selectedMarker != null)
+            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        selectedMarker = marker;
+        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        for (int cpt = 0; cpt < pointsList.size(); cpt ++){
+            if(pointsList.get(cpt).placeName.equals(marker.getTitle())){
+                infosContainer.setVisibility(View.VISIBLE);
+                setInfos(pointsList.get(cpt));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setLanguage(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
     }
 }

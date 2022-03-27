@@ -1,5 +1,6 @@
 package com.dut.blablacarfinder;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,15 +8,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 
 public class ListPointsAdapter extends BaseAdapter {
     private ArrayList<Point> pointsList;
-    private double[] area;
+    MainActivity activity;
 
-    public ListPointsAdapter(ArrayList<Point> pointsList, double[] area) {
-        this.pointsList = pointsList;
-        this.area = area;
+    public ListPointsAdapter(MainActivity activity) {
+        this.pointsList = activity.getPointsList();
+        this.activity = activity;
     }
 
     @Override
@@ -38,6 +41,7 @@ public class ListPointsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
@@ -47,14 +51,23 @@ public class ListPointsAdapter extends BaseAdapter {
 
         TextView tvPlaceName = view.findViewById(R.id.tv_place_name);
         tvPlaceName.setText(pointsList.get(i).placeName);
+        Settings.setWithDarkMode(tvPlaceName);
         TextView tvDistance = view.findViewById(R.id.tv_address_popup);
-        String text = pointsList.get(i).distanceFromUser + " meters";
+        String text;
+        if(Settings.isDistanceMeters) {
+            text = pointsList.get(i).distanceFromUser + " " + view.getContext().getString(R.string.meters);
+        } else {
+            text = MainActivity.meterToKilometer(pointsList.get(i).distanceFromUser + "")
+                    + " " + view.getContext().getString(R.string.kilometers);
+        }
+        Settings.setWithDarkMode(tvDistance);
         tvDistance.setText(text);
         View finalView = view;
         view.setOnClickListener(see -> {
-            new PopupFragment().setPopup(pointsList.get(i), finalView.getContext(), pointsList, area);
+            new PopupFragment().setPopup(pointsList.get(i), finalView.getContext(), activity);
         });
-
         return view;
     }
+
+
 }
