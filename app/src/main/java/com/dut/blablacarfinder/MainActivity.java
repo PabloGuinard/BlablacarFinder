@@ -28,8 +28,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -59,15 +67,11 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setLocation();
-        if(isNetworkAvailable()){
-            new APIAsyncTask().execute(area, this, pointsList, this.getBaseContext());
-        } else {
-
-        }
         isRefreshing = true;
 
         btMap = findViewById(R.id.bt_map);
+        setLocation();
+
         btMap.setOnClickListener(view -> {
             Intent intent = new Intent(this, Map.class);
             Resources res = getResources();
@@ -111,6 +115,29 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
                 }
             }
         });
+        if(isNetworkAvailable()){
+            new APIAsyncTask().execute(area, this, pointsList, this.getBaseContext());
+        } else {
+            try {
+                result(getPointsListsWithoutConnection());
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            Snackbar.make(btMap, "No Internet connexion", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    protected void onStop() {
+        super.onStop();
+        try {
+            FileOutputStream fos = openFileOutput("saveFile", Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(pointsList);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("erreor", e.toString());
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -185,11 +212,30 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         return result;
     }
 
+    @SuppressLint("MissingPermission")
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private ArrayList<Point> getPointsListsWithoutConnection() throws IOException, ClassNotFoundException {
+        File dir = this.getFilesDir();
+        File file = new File(dir, "saveFile");
+        ArrayList<Point> result = null;
+        if(file.exists()){
+            try {
+                FileInputStream fis2 = openFileInput("saveFile");
+                ObjectInputStream in = new ObjectInputStream(fis2);
+                result = (ArrayList<Point>) in.readObject();
+                in.close();
+                fis2.close();
+            } catch (Exception e){
+                Log.e("pas bein", e.toString());
+            }
+        }
+        return result;
     }
 }
 
