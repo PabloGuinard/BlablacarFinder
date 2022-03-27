@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Criteria;
@@ -64,6 +65,16 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setLanguage(Settings.language);
+
+        //get saved settings
+        Object settings[] = {Settings.language, Settings.isDistanceMeters, Settings.isDarkMode};
+        String settingsName[] = {Settings.LANGUAGE, Settings.IS_METERS, Settings.IS_DARK_MODE};
+        for (int cpt = 0; cpt < settings.length; cpt++){
+            settings[cpt] = getPreference(settingsName[cpt]);
+        }
+        Settings.language = (String)settings[0];
+        Settings.isDistanceMeters = (boolean)settings[1];
+        Settings.isDarkMode = (boolean)settings[2];
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -129,15 +140,7 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
     protected void onStop() {
         super.onStop();
-        try {
-            FileOutputStream fos = openFileOutput("saveFile", Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(pointsList);
-            oos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("erreor", e.toString());
-        }
+        saveData("saveFile", pointsList);
     }
 
     @SuppressLint("MissingPermission")
@@ -232,10 +235,39 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
                 in.close();
                 fis2.close();
             } catch (Exception e){
-                Log.e("pas bein", e.toString());
+                e.printStackTrace();
             }
         }
         return result;
+    }
+
+    private Object getPreference(String fileName){
+        Object result = null;
+        File dir = this.getFilesDir();
+        File file = new File(dir, fileName);
+        if(file.exists()){
+            try {
+                FileInputStream fis2 = openFileInput(fileName);
+                ObjectInputStream in = new ObjectInputStream(fis2);
+                result = in.readObject();
+                in.close();
+                fis2.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    private void saveData(String fileName, Object toSave){
+        try {
+            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(toSave);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

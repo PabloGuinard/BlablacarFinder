@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
@@ -18,6 +20,9 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Locale;
 
 public class Settings extends AppCompatActivity {
@@ -25,6 +30,9 @@ public class Settings extends AppCompatActivity {
     public static final String LANGUAGE_ENGLISH = "eng";
     public static final String LANGUAGE_FRENCH = "fr";
     public static final String INTENT_RESULT = "settings_result";
+    public static final String LANGUAGE = "language";
+    public static final String IS_METERS = "meters";
+    public static final String IS_DARK_MODE = "darkmode";
 
     public static String language = "fr";
     public static boolean isDistanceMeters = false;
@@ -68,7 +76,9 @@ public class Settings extends AppCompatActivity {
         };
         isDistanceMeters = (rgDistance.getCheckedRadioButtonId() == R.id.rb_meters);
         isDarkMode = darkMode.isChecked();
+        saveHardSettings();
         setLanguage(language);
+
     }
 
     private void setLanguage(String lang) {
@@ -134,6 +144,23 @@ public class Settings extends AppCompatActivity {
     public static void setWithDarkMode(RadioButton view){
         if(Settings.isDarkMode){
             view.setTextColor(view.getContext().getColor(R.color.white));
+        }
+    }
+
+    private void saveHardSettings(){
+        saveData(Settings.LANGUAGE, Settings.language);
+        saveData(Settings.IS_METERS, Settings.isDistanceMeters);
+        saveData(Settings.IS_DARK_MODE, Settings.isDarkMode);
+    }
+
+    private void saveData(String fileName, Object toSave){
+        try {
+            FileOutputStream fos = openFileOutput(fileName, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(toSave);
+            oos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
