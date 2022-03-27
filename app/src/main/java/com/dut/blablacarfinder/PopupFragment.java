@@ -23,7 +23,7 @@ public class PopupFragment extends Fragment {
         View view = setPopupContent(point, context);
 
         AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_marker_icon)
                 .setTitle(point.placeName)
                 .setView(view)
                 .setPositiveButton(R.string.view, new DialogInterface.OnClickListener() {

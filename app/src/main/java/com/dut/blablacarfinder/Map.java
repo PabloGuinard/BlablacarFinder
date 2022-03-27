@@ -120,7 +120,11 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
         tv = findViewById(R.id.tv_distance);
         tv.setText(point.distanceFromUser + " meters");
         tv = findViewById(R.id.tv_nb_place);
-        tv.setText(point.nbPlaces + "");
+        if(point.nbPlaces == 0){
+            tv.setText(getString(R.string.unknown));
+        } else {
+            tv.setText(point.nbPlaces + "");
+        }
     }
 
     private void addMarkers(ArrayList<Point> pointsList){
