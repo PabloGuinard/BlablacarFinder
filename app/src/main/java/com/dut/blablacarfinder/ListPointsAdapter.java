@@ -50,7 +50,7 @@ public class ListPointsAdapter extends BaseAdapter {
         tvDistance.setText(text);
         View finalView = view;
         view.setOnClickListener(see -> {
-            PopupFragment popup = new PopupFragment(pointsList.get(i), finalView.getContext());
+            new PopupFragment().setPopup(pointsList.get(i), finalView.getContext());
         });
 
         return view;
