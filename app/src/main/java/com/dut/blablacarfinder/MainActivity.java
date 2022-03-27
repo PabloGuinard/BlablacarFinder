@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
     public static final String INTENT_SELECTED_POINT = "selectedPoint";
     public static final String INTENT_CONFIGURATION = "conf";
     public static final int CODE_SETTINGS = 1000;
+    public static final int AREA_RADIUS = 50000;
 
     private double[]area;
-    public int AREA_RADIUS = 50000;
     private ArrayList<Point> pointsList = new ArrayList<>();
     private ListPointsAdapter adapter;
     private boolean isRefreshing = false;
@@ -64,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if(getIntent().hasExtra(SplashScreen.INTENT_AREA)){
+            this.area = (double[]) getIntent().getSerializableExtra(SplashScreen.INTENT_AREA);
+        } else {
+            setLocation();
+        }
+
         setLanguage(Settings.language);
 
         //get saved settings
@@ -81,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
         isRefreshing = true;
 
         btMap = findViewById(R.id.bt_map);
-        setLocation();
-
         btMap.setOnClickListener(view -> {
             Intent intent = new Intent(this, Map.class);
             Resources res = getResources();
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
         }
 
-        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner = findViewById(R.id.progressBar1);
         spinner.setVisibility(View.VISIBLE);
 
         lvPoints = findViewById(R.id.lv_main_page);
@@ -126,7 +131,10 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
                 }
             }
         });
-        if(isNetworkAvailable()){
+
+        if(getIntent().hasExtra(SplashScreen.INTENT_POINTS_LIST)){
+            result((ArrayList<Point>) getIntent().getSerializableExtra(SplashScreen.INTENT_POINTS_LIST));
+        } else if(isNetworkAvailable()){
             new APIAsyncTask().execute(area, this, pointsList, this.getBaseContext());
         } else {
             try {
@@ -136,31 +144,12 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
             }
             Snackbar.make(btMap, "No Internet connexion", Snackbar.LENGTH_SHORT).show();
         }
+
     }
 
     protected void onStop() {
         super.onStop();
         saveData("saveFile", pointsList);
-    }
-
-    @SuppressLint("MissingPermission")
-    private void setLocation(){
-        Location location;
-        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        String provider;
-        Criteria criteria =new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        provider = locationManager.getBestProvider(criteria, true);
-        location = locationManager.getLastKnownLocation(provider);
-        double[] area = new double[3];
-        if(location != null){
-            area[0] = location.getLatitude();
-            area[1] = location.getLongitude();
-            area[2] = AREA_RADIUS;
-        } else {
-            Log.e("error", "location null");
-        }
-        this.area = area;
     }
 
     @Override
@@ -196,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
             }
         }
     }
-
 
     private void setLanguage(String lang) {
         Locale myLocale = new Locale(lang);
@@ -269,6 +257,27 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
             e.printStackTrace();
         }
     }
+
+    @SuppressLint("MissingPermission")
+    private void setLocation(){
+        Location location;
+        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        String provider;
+        Criteria criteria =new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        provider = locationManager.getBestProvider(criteria, true);
+        location = locationManager.getLastKnownLocation(provider);
+        double[] area = new double[3];
+        if(location != null){
+            area[0] = location.getLatitude();
+            area[1] = location.getLongitude();
+            area[2] = AREA_RADIUS;
+        } else {
+            Log.e("error", "location null");
+        }
+        this.area = area;
+    }
+
 }
 
 
