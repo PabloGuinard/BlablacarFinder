@@ -7,13 +7,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -25,7 +23,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Locale;
 
-public class Settings extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     public static final String LANGUAGE_ENGLISH = "eng";
     public static final String LANGUAGE_FRENCH = "fr";
@@ -135,22 +133,22 @@ public class Settings extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void setWithDarkMode(TextView view){
-        if(Settings.isDarkMode){
+        if(SettingsActivity.isDarkMode){
             view.setTextColor(view.getContext().getColor(R.color.white));
         }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static void setWithDarkMode(RadioButton view){
-        if(Settings.isDarkMode){
+        if(SettingsActivity.isDarkMode){
             view.setTextColor(view.getContext().getColor(R.color.white));
         }
     }
 
     private void saveHardSettings(){
-        saveData(Settings.LANGUAGE, Settings.language);
-        saveData(Settings.IS_METERS, Settings.isDistanceMeters);
-        saveData(Settings.IS_DARK_MODE, Settings.isDarkMode);
+        saveData(SettingsActivity.LANGUAGE, SettingsActivity.language);
+        saveData(SettingsActivity.IS_METERS, SettingsActivity.isDistanceMeters);
+        saveData(SettingsActivity.IS_DARK_MODE, SettingsActivity.isDarkMode);
     }
 
     private void saveData(String fileName, Object toSave){

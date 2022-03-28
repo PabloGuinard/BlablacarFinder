@@ -1,7 +1,6 @@
 package com.dut.blablacarfinder;
 
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,16 +50,16 @@ public class ListPointsAdapter extends BaseAdapter {
 
         TextView tvPlaceName = view.findViewById(R.id.tv_place_name);
         tvPlaceName.setText(pointsList.get(i).placeName);
-        Settings.setWithDarkMode(tvPlaceName);
+        SettingsActivity.setWithDarkMode(tvPlaceName);
         TextView tvDistance = view.findViewById(R.id.tv_address_popup);
         String text;
-        if(Settings.isDistanceMeters) {
+        if(SettingsActivity.isDistanceMeters) {
             text = pointsList.get(i).distanceFromUser + " " + view.getContext().getString(R.string.meters);
         } else {
             text = MainActivity.meterToKilometer(pointsList.get(i).distanceFromUser + "")
                     + " " + view.getContext().getString(R.string.kilometers);
         }
-        Settings.setWithDarkMode(tvDistance);
+        SettingsActivity.setWithDarkMode(tvDistance);
         tvDistance.setText(text);
         View finalView = view;
         view.setOnClickListener(see -> {

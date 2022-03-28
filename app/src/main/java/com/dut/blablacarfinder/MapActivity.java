@@ -5,14 +5,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,7 +26,7 @@ import com.dut.blablacarfinder.databinding.ActivityMapBinding;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, ApiInterface, GoogleMap.OnMarkerClickListener {
+public class MapActivity<S, O> extends FragmentActivity implements OnMapReadyCallback, ApiInterface, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     double[] area;
@@ -42,7 +39,7 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setLanguage(Settings.language);
+        setLanguage(SettingsActivity.language);
         super.onCreate(savedInstanceState);
 
         binding = ActivityMapBinding.inflate(getLayoutInflater());
@@ -50,7 +47,7 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
 
         infosContainer = findViewById(R.id.infos_container);
         infosContainer.setVisibility(View.GONE);
-        if(Settings.isDarkMode){
+        if(SettingsActivity.isDarkMode){
             infosContainer.setBackgroundColor(R.color.black);
         } else {
             infosContainer.setBackgroundColor(R.color.white);
@@ -106,7 +103,7 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
                         + Math.abs(oldPosition.target.latitude - newPosition.target.latitude) > 0.1){
                     area[0] = newPosition.target.latitude;
                     area[1] = newPosition.target.longitude;
-                    new APIAsyncTask().execute(area, Map.this, pointsList, Map.this.getBaseContext());
+                    new APIAsyncTask().execute(area, MapActivity.this, pointsList, MapActivity.this.getBaseContext());
                     oldPosition = newPosition;
                 }
             }
@@ -128,7 +125,7 @@ public class Map<S, O> extends FragmentActivity implements OnMapReadyCallback, A
         tv.setText(point.city + " " + point.code);
         tv = findViewById(R.id.tv_distance);
         String text;
-        if(Settings.isDistanceMeters) {
+        if(SettingsActivity.isDistanceMeters) {
             text = point.distanceFromUser + " " + getString(R.string.meters);
         } else {
             text = MainActivity.meterToKilometer(point.distanceFromUser + "")

@@ -2,12 +2,6 @@ package com.dut.blablacarfinder;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.BaseAdapter;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +41,7 @@ public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
             URL url = new URL(partsUrl[0] + "50" + partsUrl[1] + 0 + partsUrl[2] + area[0]
                     + partsUrl[3] + area[1] + partsUrl[4] + area[2]);
             //if not first request in MainActivity
-            if(pointsList.size() != 0 && apiInterface.getClass() != Map.class){
+            if(pointsList.size() != 0 && apiInterface.getClass() != MapActivity.class){
                 url = new URL(partsUrl[0] + "10" + partsUrl[1] + pointsList.size() + partsUrl[2] + area[0]
                         + partsUrl[3] + area[1] + partsUrl[4] + (area[2] * 10));
             }
@@ -60,8 +54,8 @@ public class APIAsyncTask extends AsyncTask<Object, Void, ArrayList<Point>> {
                 in.close();
                 nbHits = response.getInt("nhits");
                 result = response.getJSONArray("records");
-                //for each next page add to result if first request or in Map
-                if(pointsList.size() != 0 && apiInterface.getClass() != Map.class){
+                //for each next page add to result if first request or in MapActivity
+                if(pointsList.size() != 0 && apiInterface.getClass() != MapActivity.class){
                     for (int cpt = nbRows; cpt < nbHits; cpt +=nbRows){
                         url = new URL(partsUrl[0] + cpt + partsUrl[1] + area[0] + partsUrl[2] + area[1] + partsUrl[3] + area[2]);
                         connection = (HttpURLConnection) url.openConnection();

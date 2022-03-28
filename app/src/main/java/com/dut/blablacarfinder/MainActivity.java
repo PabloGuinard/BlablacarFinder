@@ -8,16 +8,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -27,19 +24,15 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -71,17 +64,17 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
             setLocation();
         }
 
-        setLanguage(Settings.language);
+        setLanguage(SettingsActivity.language);
 
         //get saved settings
-        Object settings[] = {Settings.language, Settings.isDistanceMeters, Settings.isDarkMode};
-        String settingsName[] = {Settings.LANGUAGE, Settings.IS_METERS, Settings.IS_DARK_MODE};
+        Object settings[] = {SettingsActivity.language, SettingsActivity.isDistanceMeters, SettingsActivity.isDarkMode};
+        String settingsName[] = {SettingsActivity.LANGUAGE, SettingsActivity.IS_METERS, SettingsActivity.IS_DARK_MODE};
         for (int cpt = 0; cpt < settings.length; cpt++){
             settings[cpt] = getPreference(settingsName[cpt]);
         }
-        Settings.language = (String)settings[0];
-        Settings.isDistanceMeters = (boolean)settings[1];
-        Settings.isDarkMode = (boolean)settings[2];
+        SettingsActivity.language = (String)settings[0];
+        SettingsActivity.isDistanceMeters = (boolean)settings[1];
+        SettingsActivity.isDarkMode = (boolean)settings[2];
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -89,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
         btMap = findViewById(R.id.bt_map);
         btMap.setOnClickListener(view -> {
-            Intent intent = new Intent(this, Map.class);
+            Intent intent = new Intent(this, MapActivity.class);
             Resources res = getResources();
             Configuration conf = res.getConfiguration();
             intent.putExtra(INTENT_LOCATION, area);
@@ -100,11 +93,11 @@ public class MainActivity extends AppCompatActivity implements ApiInterface {
 
         btSettings = findViewById(R.id.bt_settings);
         btSettings.setOnClickListener(view -> {
-            Intent intent = new Intent(this, Settings.class);
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivityForResult(intent, CODE_SETTINGS);
         });
 
-        if(Settings.isDarkMode){
+        if(SettingsActivity.isDarkMode){
             @SuppressLint("ResourceType") ConstraintLayout layout = findViewById(R.id.lv_container);
             layout.setBackgroundColor(getColor(R.color.black));
 
